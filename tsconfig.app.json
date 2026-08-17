@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    /* `vite/client` supplies the ambient module declarations for CSS and asset imports;
+       `vitest/globals` supplies describe/it/expect without importing them everywhere. */
+    "types": ["vitest/globals", "vite/client"],
+
+    /* Strictness. `any` is banned outright — the Web Speech surface is typed by
+       hand in src/services/speechTypes.ts instead of being cast away. */
+    "strict": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": false
+  },
+  "include": ["src", "vitest.setup.ts"]
+}

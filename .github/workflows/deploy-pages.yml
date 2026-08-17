@@ -1,0 +1,81 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Build the Vite app and publish it to GitHub Pages.
+#
+# Prerequisite: in the repository, Settings → Pages → "Build and deployment" →
+# Source must be set to "GitHub Actions". With the default "Deploy from a branch"
+# setting this workflow runs green and publishes nothing.
+#
+# The app is fully static and has no backend, so the whole deployment is the
+# contents of dist/. `base: './'` in vite.config.ts means the emitted asset paths
+# are relative and work under the /voice-command-demo/ project sub-path without
+# the repository name being baked into the build.
+# ══════════════════════════════════════════════════════════════════════════════
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets you re-publish from the Actions tab without an empty commit.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Both are required by the Pages deployment API: `pages: write` to publish, and
+  # `id-token: write` for the OIDC token that actions/deploy-pages exchanges for
+  # short-lived credentials. Omitting id-token gives a confusing 403 at deploy time.
+  pages: write
+  id-token: write
+
+# Never let two publishes race. `cancel-in-progress: false` so an in-flight deploy
+# is allowed to finish rather than leaving Pages in a half-updated state — a queued
+# run will simply publish the newer commit straight afterwards.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # `npm ci` rather than `npm install`: it installs exactly what the lockfile
+      # says and fails loudly if the lockfile and package.json have drifted, which
+      # is what you want in CI.
+      - name: Install dependencies
+        run: npm ci
+
+      # The tests are unit tests over pure modules with stubbed speech APIs, so they
+      # run headlessly with no browser, no audio device and no microphone.
+      - name: Run tests
+        run: npm test
+
+      # `npm run build` is `tsc -b && vite build`, so a type error fails the deploy.
+      - name: Build
+        run: npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
