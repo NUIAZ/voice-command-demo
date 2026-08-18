@@ -2,8 +2,8 @@
  * @file speech.test.ts
  * @description Covers `SpeechService` against hand-written stubs.
  *
- * NO REAL MICROPHONE IS EVER TOUCHED. Every browser surface the service uses —
- * recognition, synthesis, permissions, media devices, storage — is injected through the
+ * NO REAL MICROPHONE IS EVER TOUCHED. Every browser surface the service uses
+ * (recognition, synthesis, permissions, media devices, storage) is injected through the
  * constructor, which is precisely why the service takes them as options rather than
  * reaching for globals.
  *
@@ -125,7 +125,7 @@ class FakeSynthesis {
     cancelCalls = 0;
     pauseCalls = 0;
     resumeCalls = 0;
-    /** When false, an utterance never ends on its own — used to test the error path. */
+    /** When false, an utterance never ends on its own; used to test the error path. */
     autoEnd = true;
     voices: SpeechSynthesisVoice[] = [];
 
@@ -383,7 +383,7 @@ describe('speaking', () => {
         await expect(service.speak('this must not be spoken')).resolves.toBeUndefined();
         expect(harness.synthesis.spoken).toHaveLength(0);
 
-        // And unmuting takes effect immediately, on the very next utterance — this is
+        // And unmuting takes effect immediately, on the very next utterance; this is
         // the behaviour the reference implementation's stale closure broke.
         service.updateSettings({ muted: false });
         await service.speak('this one should be spoken');
@@ -401,7 +401,7 @@ describe('speaking', () => {
         expect(harness.synthesis.cancelCalls).toBeGreaterThan(cancelsBefore);
     });
 
-    it('resolves on onerror as well as onend — a promise that only settles on onend deadlocks', async () => {
+    it('resolves on onerror as well as onend: a promise that only settles on onend deadlocks', async () => {
         const harness = makeHost();
         const service = makeService(harness);
         harness.synthesis.autoEnd = false;

@@ -4,7 +4,7 @@
  * a table.
  *
  * This is the "application" the voice interface is controlling. It matters that it is a
- * real, ordinary UI — filters and a table that work perfectly well with a mouse — because
+ * real, ordinary UI (filters and a table that work perfectly well with a mouse) because
  * the point being demonstrated is voice control *of an app*, not a voice app. Every
  * spoken command has a visible counterpart here, and both drive the same state.
  */
@@ -75,7 +75,7 @@ export default function FleetView({
     useEffect(() => {
         if (!focusedVehicleId || !focusedRowRef.current) return;
         // Feature-detected: `scrollIntoView` is not implemented by every DOM environment
-        // (jsdom, notably), and scrolling is a nicety — it must never be able to throw
+        // (jsdom, notably), and scrolling is a nicety; it must never be able to throw
         // from an effect and take the whole tree down with it.
         if (typeof focusedRowRef.current.scrollIntoView !== 'function') return;
         const reduceMotion =
@@ -99,7 +99,7 @@ export default function FleetView({
         <>
             <section className="panel" aria-labelledby="fleet-heading">
                 <div className="panel__head">
-                    <h2 id="fleet-heading">Harborline Courier Co. — fleet status</h2>
+                    <h2 id="fleet-heading">Harborline Courier Co.: fleet status</h2>
                     <span className="muted small">Fictional data. Nothing here is real.</span>
                 </div>
 
@@ -206,7 +206,7 @@ export default function FleetView({
                     */}
                     <p className="small muted" role="status" style={{ margin: 0 }}>
                         Showing {visible.length} of {VEHICLES.length}
-                        {filterDescription ? ` — ${filterDescription}` : ''}
+                        {filterDescription ? `: ${filterDescription}` : ''}
                     </p>
                 </div>
 

@@ -21,7 +21,7 @@
  *     score. "I'd rather not hear about the offline ones" matches the offline command,
  *     because the word "offline" is in it. Negation is invisible to a substring test.
  *   ✗ It has NO slot filling beyond the small extractors in `src/data/index.ts`. It
- *     cannot handle "compare Northgate and Riverside" — it will find one depot and
+ *     cannot handle "compare Northgate and Riverside"; it will find one depot and
  *     ignore the other.
  *   ✗ ORDER IS LOAD-BEARING. "mute" is a substring of "unmute", so if the mute command
  *     came first, unmuting would be impossible. Every ordering decision below is
@@ -29,8 +29,8 @@
  *     that a future edit that reshuffles the list fails loudly.
  *
  *   ✓ In exchange: it is fully deterministic, it runs in microseconds, every branch is
- *     unit-testable, it needs no network and no model, and — the important one for a
- *     voice interface — when it gets something wrong you can read the code and see
+ *     unit-testable: it needs no network and no model, and (the important one for a
+ *     voice interface) when it gets something wrong you can read the code and see
  *     exactly why. That is a genuinely reasonable trade for a fixed, small vocabulary.
  *     It stops being reasonable the moment the vocabulary grows past a few dozen phrases
  *     or users start speaking freely, at which point you want real intent recognition.
@@ -117,7 +117,7 @@ export type CommandEffect =
 
 /**
  * What one turn of the conversation produces. Every handler returns exactly one of
- * these, and so does the unknown-command fallback — the router has no failure channel
+ * these, and so does the unknown-command fallback; the router has no failure channel
  * and never throws, because a voice interface that goes silent is worse than one that
  * says something unhelpful.
  *
@@ -148,7 +148,7 @@ export interface CommandDefinition {
     /**
      * Trigger phrases, matched as substrings of the normalised transcript unless
      * `matches` is provided. Also displayed on the Commands page, so they double as
-     * user-facing documentation — keep them things a person would actually say.
+     * user-facing documentation; keep them things a person would actually say.
      */
     keywords: string[];
     /** A complete phrase a user could say. Also what the "Try it" button runs. */
@@ -162,20 +162,20 @@ export interface CommandDefinition {
      * WORD BOUNDARIES instead. `keywords` is still populated for display.
      */
     matches?: (normalized: string) => boolean;
-    /** Produces the answer. Pure — takes the normalised transcript, returns a result. */
+    /** Produces the answer. Pure: takes the normalised transcript, returns a result. */
     handler: (normalized: string) => CommandResult;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   Stop words — ONE definition, used everywhere
+   Stop words: ONE definition, used everywhere
    ════════════════════════════════════════════════════════════════════════════ */
 
 /**
  * The phrases that end a voice session.
  *
  * SINGLE SOURCE OF TRUTH. The reference implementation this demo is generalised from
- * had the stop-word list in two places — once in the command table and once inline in
- * the React overlay's result handler — which had already drifted: the overlay knew
+ * had the stop-word list in two places, once in the command table and once inline in
+ * the React overlay's result handler, which had already drifted: the overlay knew
  * about "close" and the command table did not, so "close" ended the session without
  * ever producing a spoken confirmation. Both call sites now use this array (and the
  * `isStopPhrase` helper below), so drift is impossible.
@@ -230,7 +230,7 @@ function nameList(vehicles: readonly Vehicle[], max = 5): string {
     const names = vehicles.slice(0, max).map((v) => v.name);
     const remaining = vehicles.length - names.length;
     // When the list is truncated the "and N others" IS the audible terminator, so the
-    // names themselves are joined with plain commas — running `speakList` here would
+    // names themselves are joined with plain commas; running `speakList` here would
     // produce "A, B, and C, and 3 others", which sounds like a mistake.
     if (remaining > 0) return `${names.join(', ')}, and ${plural(remaining, 'other')}`;
     return speakList(names);
@@ -253,7 +253,7 @@ function resolveView(normalized: string): ViewId | null {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   THE COMMAND TABLE — ORDER IS PART OF THE BEHAVIOUR
+   THE COMMAND TABLE: ORDER IS PART OF THE BEHAVIOUR
    ════════════════════════════════════════════════════════════════════════════
 
    Reading order is matching order. The comment above each entry says why it sits where
@@ -316,7 +316,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
             reply(
                 'help',
                 'You can ask for a fleet summary, ask if there are any problems, or ask how many vehicles are ' +
-                    'charging, idle, on route, in maintenance, or offline. Ask about a depot by name — Northgate, ' +
+                    'charging, idle, on route, in maintenance, or offline. Ask about a depot by name. Northgate, ' +
                     'Riverside, Eastport, Summit Park, Lakeview, or Old Quarry. Ask about a single van by its call ' +
                     'sign, like Kestrel or Dunlin. You can also say speak faster, speak slower, mute, or stop ' +
                     'listening. Say open the commands page to see the full list on screen.',
@@ -325,7 +325,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
 
     // ── 3. UNMUTE, then 4. MUTE ──────────────────────────────────────────────
     // THE CANONICAL ORDERING TRAP: "mute" is a substring of "unmute". With mute first,
-    // "unmute" matches mute and the user can never turn the voice back on — and because
+    // "unmute" matches mute and the user can never turn the voice back on, and because
     // the response is spoken, a muted assistant cannot even tell them what went wrong.
     // The longer, more specific phrase must always be tested first.
     {
@@ -453,13 +453,13 @@ export const COMMANDS: readonly CommandDefinition[] = [
     // ── 10. BATTERY / CHARGE ─────────────────────────────────────────────────
     // Before the generic count and list commands so "which vans have low battery" is not
     // answered with a status breakdown. If a call sign is present the handler answers
-    // for that van instead — a small, deliberate exception to "one command, one answer",
+    // for that van instead: a small, deliberate exception to "one command, one answer",
     // because "what's the battery on Dunlin" is an obvious thing to say and routing it
     // to a fleet-wide report would feel broken.
     {
         id: 'battery',
         title: 'Battery / charge',
-        description: `Vans at or below ${LOW_BATTERY_THRESHOLD}% charge — or one van's charge if you name it.`,
+        description: `Vans at or below ${LOW_BATTERY_THRESHOLD}% charge, or one van's charge if you name it.`,
         group: 'Fleet',
         keywords: ['low battery', 'low charge', 'battery', 'state of charge', 'charge level'],
         example: 'which vans have low battery',
@@ -488,7 +488,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
 
     // ── 11. PACKAGES ─────────────────────────────────────────────────────────
     // Before `count`, because "how many packages are left" contains "how many" and would
-    // otherwise be answered with a vehicle count — a wrong answer to a well-formed
+    // otherwise be answered with a vehicle count: a wrong answer to a well-formed
     // question, which is the worst kind of voice-interface failure.
     {
         id: 'packages',
@@ -585,7 +585,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
                 bits.push(`${plural(vehicle.packagesRemaining, 'parcel')} still on board`);
             }
             bits.push(`odometer ${speakDistanceKm(vehicle.odometerKm)}`);
-            // IP read as "203 dot 0 dot 113 dot 11" — every engine tested reads a raw
+            // IP read as "203 dot 0 dot 113 dot 11"; every engine tested reads a raw
             // dotted quad as a decimal number, which is impossible to write back down.
             bits.push(`telematics ${speakIp(vehicle.telematicsIp)}`);
             bits.push(`last check-in ${speakMinutes(vehicle.lastCheckInMinutes)} ago`);
@@ -651,7 +651,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
         handler: (t) => {
             const status = matchStatusInTranscript(t);
             if (!status) {
-                // No state named — give the breakdown, which is what "list the vans"
+                // No state named: give the breakdown, which is what "list the vans"
                 // most plausibly means.
                 const counts = STATUSES.map(
                     (s) => `${vehiclesByStatus(s.id).length} ${s.label.toLowerCase()}`,
@@ -700,7 +700,7 @@ export const COMMANDS: readonly CommandDefinition[] = [
             const tail = s.allClear
                 ? ' Nothing needs attention.'
                 : ` ${plural(s.offline + s.maintenance + s.lowBattery + s.staleCheckIns, 'item')} ` +
-                  `${isAre(s.offline + s.maintenance + s.lowBattery + s.staleCheckIns)} flagged — say "any problems" for the detail.`;
+                  `${isAre(s.offline + s.maintenance + s.lowBattery + s.staleCheckIns)} flagged; say "any problems" for the detail.`;
             return reply('summary', head + body + tail);
         },
     },
@@ -783,8 +783,8 @@ export function getCommand(id: string): CommandDefinition | undefined {
  * convenience: it is the whole accessibility story for anyone using Firefox (no
  * recognition support at all), anyone without a microphone, anyone in a shared or noisy
  * space, and anyone who cannot or would rather not speak. The demo has to be fully
- * usable by pointer and keyboard, and running the *identical* handler — rather than a
- * parallel click-only code path — is what guarantees the two stay in step.
+ * usable by pointer and keyboard, and running the *identical* handler, rather than a
+ * parallel click-only code path, is what guarantees the two stay in step.
  */
 export function runCommandById(id: string, transcriptOverride?: string): CommandResult {
     const command = getCommand(id);

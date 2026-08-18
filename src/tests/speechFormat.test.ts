@@ -24,7 +24,7 @@ import {
     speakPercent,
 } from '../services/speechFormat';
 
-describe('speakIp — dotted quads must be spoken, not read as a decimal', () => {
+describe('speakIp: dotted quads must be spoken, not read as a decimal', () => {
     it('replaces every separator with the spoken word "dot"', () => {
         expect(speakIp('203.0.113.5')).toBe('203 dot 0 dot 113 dot 5');
     });
@@ -39,7 +39,7 @@ describe('speakIp — dotted quads must be spoken, not read as a decimal', () =>
     });
 });
 
-describe('speakId — mixed letter/digit asset tags', () => {
+describe('speakId: mixed letter/digit asset tags', () => {
     it('spaces out an uppercase run so it is not read as a word', () => {
         // Without this, engines pronounce "HC-118" as "hick one hundred eighteen".
         expect(speakId('HC-118')).toBe('H C 118');
@@ -50,7 +50,7 @@ describe('speakId — mixed letter/digit asset tags', () => {
     });
 });
 
-describe('pluralisation — spoken output notices "1 vans" far more than text does', () => {
+describe('pluralisation: spoken output notices "1 vans" far more than text does', () => {
     it('uses the singular for exactly one', () => {
         expect(plural(1, 'van')).toBe('1 van');
         expect(pluralWord(1, 'van')).toBe('van');
@@ -72,7 +72,7 @@ describe('pluralisation — spoken output notices "1 vans" far more than text do
     });
 });
 
-describe('speakList — a spoken list needs an audible end', () => {
+describe('speakList: a spoken list needs an audible end', () => {
     it('returns an empty string for nothing', () => {
         expect(speakList([])).toBe('');
     });
@@ -94,7 +94,7 @@ describe('speakList — a spoken list needs an audible end', () => {
     });
 });
 
-describe('nonZeroParts — never recite zeros', () => {
+describe('nonZeroParts: never recite zeros', () => {
     it('drops every zero-count entry', () => {
         const parts = nonZeroParts([
             { count: 0, text: 'no offline vans' },
@@ -110,7 +110,7 @@ describe('nonZeroParts — never recite zeros', () => {
 });
 
 describe('number and unit formatting', () => {
-    it('rounds percentages — engines read long decimals as digit soup', () => {
+    it('rounds percentages: engines read long decimals as digit soup', () => {
         expect(speakPercent(82.6666)).toBe('83 percent');
         expect(speakPercent(11)).toBe('11 percent');
     });
@@ -130,7 +130,7 @@ describe('number and unit formatting', () => {
     });
 });
 
-describe('normalizeTranscript — recognisers punctuate unpredictably', () => {
+describe('normalizeTranscript: recognisers punctuate unpredictably', () => {
     it('lowercases and strips trailing punctuation', () => {
         expect(normalizeTranscript('Any Problems?')).toBe('any problems');
     });
@@ -149,7 +149,7 @@ describe('normalizeTranscript — recognisers punctuate unpredictably', () => {
     });
 });
 
-describe('containsWord — why short call signs must not be substring-matched', () => {
+describe('containsWord: why short call signs must not be substring-matched', () => {
     it('matches a whole word', () => {
         expect(containsWord('tell me about tern', 'Tern')).toBe(true);
     });

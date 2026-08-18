@@ -97,7 +97,7 @@ export interface FleetSummary {
 /**
  * Computes the whole `FleetSummary` in one pass of the query helpers.
  *
- * Every field is derived from `VEHICLES` at call time — there is no memoisation and no
+ * Every field is derived from `VEHICLES` at call time; there is no memoisation and no
  * cached snapshot, so a test that swaps the dataset sees the change immediately. Cheap
  * enough at 48 rows that caching would cost more in staleness bugs than it saves.
  *
@@ -154,7 +154,7 @@ export function findVehicle(idOrName: string): Vehicle | undefined {
  * by descending length makes the most specific match win, which is the behaviour people
  * expect.
  *
- * Asset tags are also matched, but only in their spoken form — a recogniser hears
+ * Asset tags are also matched, but only in their spoken form; a recogniser hears
  * "HC-118" as "hc 118", "h c one one eight" or "age see 118" depending on how it was
  * said, so we normalise the digits out of the tag and look for those.
  */

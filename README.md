@@ -9,16 +9,16 @@
 Web Speech API.** No API keys. No backend. No cloud service of its own. No paid tier.
 The whole thing is a static bundle that runs on GitHub Pages.
 
-**Live demo:** https://&lt;user&gt;.github.io/voice-command-demo/
+**Live demo:** https://nuiaz.github.io/voice-command-demo/
 
 Ask it a question out loud and it answers out loud:
 
-> — *"Are there any problems?"*
-> — *"Four things to look at. Three vans offline: Finch, Oriole and Kingfisher. Four vans
+> *"Are there any problems?"*
+> *"Four things to look at. Three vans offline: Finch, Oriole and Kingfisher. Four vans
 > in maintenance… Six vans at or below twenty percent charge…"*
 
-> — *"Tell me about Kingfisher."*
-> — *"Kingfisher, asset H C 140, is offline, assigned to Lakeview, charge 47 percent,
+> *"Tell me about Kingfisher."*
+> *"Kingfisher, asset H C 140, is offline, assigned to Lakeview, charge 47 percent,
 > 7 parcels still on board, odometer 53 thousand 640 kilometres, telematics
 > 198 dot 51 dot 100 dot 75, last check-in 1 hour 36 minutes ago. Last seen leaving the
 > Aldergate yard. No position fix since."*
@@ -51,10 +51,10 @@ Most "voice AI" demos are a thin client in front of a paid speech API. This one 
 opposite: it is the demonstration that **a genuinely useful hands-free interface can be
 built with two browser APIs that have shipped for over a decade and cost nothing**.
 
-- `SpeechRecognition` — continuous speech to text, in the browser.
-- `speechSynthesis` — text to speech, in the browser.
+- `SpeechRecognition`: continuous speech to text, in the browser.
+- `speechSynthesis`: text to speech, in the browser.
 
-Everything else — the command router, the dataset, the response phrasing — is ordinary
+Everything else (the command router, the dataset, the response phrasing) is ordinary
 TypeScript. The interesting engineering is not in recognising speech; it is in the dozen
 awkward behaviours that sit between "the API exists" and "this does not drive people mad",
 which are documented at length below and in the source.
@@ -62,7 +62,7 @@ which are documented at length below and in the source.
 ## Try it without speaking
 
 Every command has a **"Try it"** button on the *Commands* page, and there is a text input
-in the voice panel. Both run the **identical handler** the microphone would have run —
+in the voice panel. Both run the **identical handler** the microphone would have run,
 not a parallel code path.
 
 That matters for Firefox (no speech recognition at all), for anyone without a microphone,
@@ -102,7 +102,7 @@ Three modules, deliberately separable:
 | `src/services/commands.ts` | Ordered command table over the dataset. Pure and synchronous. | The dataset only. |
 | `src/hooks/useVoiceSession.ts` | Binds the two to React. Owns the history, applies effects. | Both of the above. |
 
-`speech.ts` is framework-free and reusable on its own — drop it into any project.
+`speech.ts` is framework-free and reusable on its own; drop it into any project.
 
 ## The hard parts of the Web Speech API
 
@@ -120,13 +120,13 @@ drop an utterance without firing either, so there is also a watchdog timer scale
 text length and divided by the speech rate.
 
 **3. "Continuous" is not continuous.** Chrome ends a recognition session on its own
-silence timeout — a few seconds of quiet — even with `continuous = true`. Restart it from
+silence timeout (a few seconds of quiet) even with `continuous = true`. Restart it from
 `onend` or hands-free mode dies about ten seconds after the user stops talking, with no
 indication that it has.
 
 **4. …but restart with a budget.** If the engine *cannot* start (revoked permission,
 unplugged microphone, recogniser offline), `start()` throws or errors immediately, which
-fires `onend`, which restarts — a tight spin that pins a core. Restarts here are counted,
+fires `onend`, which restarts: a tight spin that pins a core. Restarts here are counted,
 backed off, and eventually given up on with a message.
 
 **5. `no-speech` and `aborted` are not errors.** They are the two most common events on
@@ -135,7 +135,7 @@ error banner during completely normal use. `not-allowed`, `audio-capture` and `n
 each get their own specific message instead.
 
 **6. `start()` and `stop()` throw.** `InvalidStateError` when the engine is already in the
-state you asked for — and you cannot know which state it is in, because it changes state
+state you asked for, and you cannot know which state it is in, because it changes state
 by itself. Every call is wrapped.
 
 **7. Permission is a one-way door.** A denied microphone is remembered per origin and the
@@ -145,7 +145,7 @@ not as a denial), routes the prompt through `getUserMedia` so a refusal arrives 
 distinguishable `NotAllowedError`, and shows a "here is how to re-enable it" panel instead
 of a generic error.
 
-**8. `cancel()` fires the previous utterance's `onend`.** Which restarts recognition — in
+**8. `cancel()` fires the previous utterance's `onend`.** Which restarts recognition, in
 the middle of the *new* utterance. Every utterance carries a monotonic id and only the
 newest one may change state.
 
@@ -163,7 +163,7 @@ get spelled-out units, and durations become "1 hour 37 minutes".
 
 **12. Pluralise, and never recite zeros.** "1 vans" is a typo you skim past on screen and
 a jolt when spoken. And a status report that says "zero offline, zero in maintenance, zero
-low battery" takes eight seconds to say nothing — report only the non-zero categories and
+low battery" takes eight seconds to say nothing; report only the non-zero categories and
 fall back to a single "all clear".
 
 ## Command vocabulary
@@ -174,7 +174,7 @@ Nineteen commands. Full trigger lists, examples and a "Try it" button for each a
 | Command | Say something like | Answers with |
 | --- | --- | --- |
 | Fleet summary | "give me a fleet summary", "status", "how are we doing" | Headline counts, average charge, parcels outstanding |
-| Any problems | "are there any problems", "what's wrong" | Offline, in maintenance, low charge, stale check-ins — non-zero categories only |
+| Any problems | "are there any problems", "what's wrong" | Offline, in maintenance, low charge, stale check-ins (non-zero categories only) |
 | Counts | "how many vans are charging", "how many at Riverside" | A count by state or by depot |
 | List by state | "show me all the offline vans", "which vans are en route" | Names them and filters the table |
 | Battery / charge | "which vans have low battery", "what's the battery on Dunlin" | Low-charge list, or one van's charge |
@@ -190,7 +190,7 @@ Nineteen commands. Full trigger lists, examples and a "Try it" button for each a
 | Help | "what can you do" | A ~15-second spoken summary |
 | Stop | "stop listening", "never mind", "quiet" | Ends the session |
 
-### How matching works — honestly
+### How matching works, honestly
 
 The transcript is lowercased, stripped of punctuation, and tested against an **ordered**
 list of commands. The first command whose trigger phrase appears as a substring wins;
@@ -207,14 +207,14 @@ What that is **not**:
 - **Not slot filling.** "Compare Northgate and Riverside" finds one depot and ignores the
   other.
 - **Order-dependent.** `"mute"` is a substring of `"unmute"`, so unmute *must* be tested
-  first or the user can never turn the voice back on — and a muted assistant cannot tell
+  first or the user can never turn the voice back on, and a muted assistant cannot tell
   them why. Every ordering decision is commented in `commands.ts` and asserted in the test
   suite.
 
 In exchange it is fully deterministic, runs in microseconds, needs no network and no
 model, and when it gets something wrong you can read the source and see exactly why. That
 is a fair trade for a small fixed vocabulary. It stops being a fair trade the moment the
-vocabulary grows or users start speaking freely — at which point you want real intent
+vocabulary grows or users start speaking freely, at which point you want real intent
 recognition, and you should not pretend otherwise.
 
 ## Browser support
@@ -231,9 +231,9 @@ The short version:
 
 Requirements:
 
-- **A secure context** — HTTPS, or `http://localhost`. Microphone access is refused on a
+- **A secure context**: HTTPS, or `http://localhost`. Microphone access is refused on a
   plain `http://` origin, which is the usual reason a LAN-hosted copy "doesn't work".
-- **Microphone permission** — asked once per origin, and a denial is remembered.
+- **Microphone permission**: asked once per origin, and a denial is remembered.
 - **A network connection**, for recognition, in Chromium browsers. See below.
 - **A user gesture**, in Safari. The microphone button satisfies this everywhere.
 
@@ -255,19 +255,19 @@ JavaScript no way to tell the difference.
   command history live in memory and vanish when the tab closes.
 
 If the audio itself is sensitive, the Web Speech API cannot give you the guarantee you
-need — you want a recogniser you control, running somewhere you can point at.
+need; you want a recogniser you control, running somewhere you can point at.
 
 ## Accessibility
 
 **Voice control is itself an assistive technology.** For someone with a motor impairment,
 RSI, a temporary injury, or their hands full, speaking to an interface may be the only
 practical way to use it. Which makes it all the more important that adding voice does not
-degrade anything else — a voice mode reachable only by mouse, or that steals focus, or
+degrade anything else: a voice mode reachable only by mouse, or that steals focus, or
 that animates continuously, makes an app *less* accessible overall even though the new
 feature is an accessibility feature.
 
 It also has limits worth being honest about: recognition accuracy is measurably worse for
-non-native accents, regional dialects, and people with dysarthria, aphasia or a stammer —
+non-native accents, regional dialects, and people with dysarthria, aphasia or a stammer:
 the exact groups most likely to benefit. Voice must be an addition to a pointer and
 keyboard interface, never a replacement.
 
@@ -275,14 +275,14 @@ What this demo does:
 
 - Every command is keyboard- and pointer-operable via **Try it** buttons and a text input,
   running the same handlers.
-- Live transcript and every response are in `aria-live` regions — separate regions,
+- Live transcript and every response are in `aria-live` regions (separate regions,
   because interim text updates several times a second and would otherwise drown the
-  answer.
+  answer).
 - All animation is disabled under `prefers-reduced-motion`; the listening pulse is
   decorative and duplicated by colour, label and a `role="status"` message.
 - Skip link as the first focusable element; visible high-contrast focus rings; focus is
   never stolen.
-- No state conveyed by colour alone — status pills carry text, the battery bar carries its
+- No state conveyed by colour alone: status pills carry text, the battery bar carries its
   number.
 - Semantic landmarks throughout, and a `forced-colors` block for Windows high-contrast
   mode.
@@ -293,8 +293,8 @@ Requires Node 20+ (CI uses 22).
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173 — a secure context, so the microphone works
-npm test         # vitest, jsdom, speech APIs stubbed — no microphone needed
+npm run dev      # http://localhost:5173 (a secure context, so the microphone works)
+npm test         # vitest (jsdom, speech APIs stubbed, no microphone needed)
 npm run build    # tsc -b && vite build → dist/
 npm run preview  # serve the production build locally
 ```
@@ -316,7 +316,7 @@ src/
     types.ts           Vehicle / Depot / status types.
     vehicles.ts        48 fictional vans, written out longhand.
     depots.ts          6 fictional depots, plus the status vocabulary.
-    index.ts           Query layer — shaped like the HTTP calls a real app would make.
+    index.ts           Query layer: shaped like the HTTP calls a real app would make.
   hooks/
     useVoiceSession.ts React binding. Owns history, applies effects, avoids stale closures.
   components/
@@ -345,4 +345,4 @@ green and publishes nothing.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Ryan Gross.
+MIT. See [LICENSE](LICENSE). Copyright (c) 2026 Ryan Gross.

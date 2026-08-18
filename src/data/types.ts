@@ -2,7 +2,7 @@
  * @file types.ts
  * @description Types for the demo's fictional dataset.
  *
- * The dataset is entirely invented — Harborline Courier Co. is not a real company,
+ * The dataset is entirely invented: Harborline Courier Co. is not a real company,
  * the depots are not real places, and every address is drawn from the documentation
  * ranges reserved by RFC 5737 (203.0.113.0/24, 198.51.100.0/24) or the private range
  * of RFC 1918 (192.168.0.0/16). None of it can ever route anywhere.
@@ -28,7 +28,7 @@ export interface StatusMeta {
     label: string;
     /**
      * Phrases that should resolve to this status when heard. Includes the recogniser's
-     * common mis-hearings — e.g. "on route" reliably comes back as "on route",
+     * common mis-hearings, e.g. "on route" reliably comes back as "on route",
      * "en route" or "onroute" depending on accent, and all three must work.
      */
     spokenAliases: string[];
@@ -52,7 +52,7 @@ export interface Depot {
     spokenAliases: string[];
     /** Documentation-range subnet the depot's telematics units sit on. */
     subnet: string;
-    /** Number of charging bays — gives the depot report something to say. */
+    /** Number of charging bays: gives the depot report something to say. */
     chargeBays: number;
 }
 
@@ -62,7 +62,7 @@ export interface Depot {
  * `name` is a short, phonetically distinct call sign (bird names). WHY birds: the whole
  * fleet needed 48 one- or two-syllable words that a speech recogniser will not confuse
  * with each other or with a command keyword. Bird names happen to be a large, familiar,
- * well-separated vocabulary — real fleets pick their call signs the same way, and for
+ * well-separated vocabulary; real fleets pick their call signs the same way, and for
  * the same reason.
  */
 export interface Vehicle {
@@ -81,7 +81,7 @@ export interface Vehicle {
     packagesRemaining: number;
     /** Lifetime distance. */
     odometerKm: number;
-    /** Telematics unit address — RFC 5737 / RFC 1918 documentation ranges only. */
+    /** Telematics unit address: RFC 5737 / RFC 1918 documentation ranges only. */
     telematicsIp: string;
     /** Minutes since the telematics unit last reported in. */
     lastCheckInMinutes: number;

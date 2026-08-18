@@ -7,7 +7,7 @@
  * no-speech fallbacks exist for. If the tree renders and the click-to-try path works
  * here, it works for every user who cannot or will not use a microphone.
  *
- * Rendered with plain `react-dom/client` rather than a testing library — the assertions
+ * Rendered with plain `react-dom/client` rather than a testing library; the assertions
  * are simple enough not to need one, and a demo repository should not carry a dependency
  * it barely uses.
  */
@@ -95,7 +95,7 @@ describe('application shell', () => {
     });
 });
 
-describe('click-to-try — the no-microphone path', () => {
+describe('click-to-try: the no-microphone path', () => {
     it('runs a command from the Commands page and shows the spoken answer as text', async () => {
         await click(byText('button', 'Commands'));
         expect(container.textContent).toContain('Command reference');
@@ -116,7 +116,7 @@ describe('click-to-try — the no-microphone path', () => {
         expect(container.textContent).toContain('Command history');
     });
 
-    it('applies a command effect — a filter command narrows the table and navigates back to it', async () => {
+    it('applies a command effect: a filter command narrows the table and navigates back to it', async () => {
         await click(byText('button', 'Commands'));
         const listCard = Array.from(container.querySelectorAll('li.command-card')).find((li) =>
             li.textContent?.includes('List by state'),

@@ -4,7 +4,7 @@
  * `SpeechRecognition` (speech in) and `speechSynthesis` (speech out).
  *
  * There is no React in this file on purpose. Everything here is a plain class with
- * callback properties, so it can be dropped into any app — or none at all — and so the
+ * callback properties, so it can be dropped into any app, or none at all, and so the
  * awkward parts of the browser API can be unit-tested against stubs instead of a
  * microphone.
  *
@@ -20,7 +20,7 @@
  *
  * 2. SPEAK() MUST NEVER HANG. Callers `await` it, so the promise has to settle on
  *    `onend` AND on `onerror`. Both. A promise that only resolves on `onend` deadlocks
- *    the whole voice session the first time the engine errors — and engines error for
+ *    the whole voice session the first time the engine errors, and engines error for
  *    mundane reasons like the tab losing audio focus.
  *
  * 3. "CONTINUOUS" IS NOT CONTINUOUS. Chrome ends a recognition session on its own
@@ -34,14 +34,14 @@
  *    wrapped.
  *
  * 5. `no-speech` AND `aborted` ARE NOT ERRORS. They are the two most common events the
- *    error channel emits — "you went quiet" and "you called stop()". Surfacing them as
+ *    error channel emits: "you went quiet" and "you called stop()". Surfacing them as
  *    failures means the UI shows an error banner during completely normal use.
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * BUGS FIXED HERE THAT THE REFERENCE IMPLEMENTATION HAD
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * FIX A — MICROPHONE PERMISSION WAS NEVER PRE-FLIGHTED. The original just called
+ * FIX A: MICROPHONE PERMISSION WAS NEVER PRE-FLIGHTED. The original just called
  *   `recognition.start()` and let a denied microphone surface as a generic "error"
  *   status, which is indistinguishable from a network failure and gives the user
  *   nothing to act on. We now query `navigator.permissions` where it is supported,
@@ -49,28 +49,28 @@
  *   familiar permission dialog), and map the `not-allowed` / `service-not-allowed`
  *   recognition errors onto a dedicated `mic-blocked` status that the UI can explain.
  *
- * FIX B — CANCEL/SPEAK RACE. The original called `synthesis.cancel()` at the top of
+ * FIX B: CANCEL/SPEAK RACE. The original called `synthesis.cancel()` at the top of
  *   `speak()`. Cancelling fires the *previous* utterance's `onend`/`onerror`, whose
- *   handler then restarts recognition — in the middle of the new utterance. The app
+ *   handler then restarts recognition in the middle of the new utterance. The app
  *   promptly hears itself. Every utterance now carries a monotonically increasing id
  *   and only the newest one is allowed to change state or restart recognition.
  *
- * FIX C — NO WATCHDOG. Safari (and Chrome when a tab is backgrounded) can drop an
+ * FIX C: NO WATCHDOG. Safari (and Chrome when a tab is backgrounded) can drop an
  *   utterance without firing either `onend` or `onerror`. The awaited promise then
  *   never settles and the session wedges. A timeout scaled to the text length settles
  *   it and restores listening.
  *
- * FIX D — CHROME TRUNCATES LONG UTTERANCES. Chrome's synthesiser stops speaking after
+ * FIX D: CHROME TRUNCATES LONG UTTERANCES. Chrome's synthesiser stops speaking after
  *   roughly 15 seconds. The long-standing workaround is a `pause()`/`resume()` heartbeat
  *   while a long utterance is in flight; see `startSynthesisHeartbeat`.
  *
- * FIX E — UNBOUNDED RESTART LOOP. The original's `onend` handler restarted recognition
- *   unconditionally. If the engine cannot start — revoked microphone, no input device,
- *   offline — `start()` throws or immediately errors, which fires `onend` again, which
+ * FIX E: UNBOUNDED RESTART LOOP. The original's `onend` handler restarted recognition
+ *   unconditionally. If the engine cannot start (revoked microphone, no input device,
+ *   offline), `start()` throws or immediately errors, which fires `onend` again, which
  *   restarts... a tight spin that pins a core and floods the console. Restarts are now
  *   counted, backed off, and given up on.
  *
- * FIX F — VOICES WERE FILTERED TO ENGLISH ONLY. That silently hides every voice a
+ * FIX F: VOICES WERE FILTERED TO ENGLISH ONLY. That silently hides every voice a
  *   non-English user has installed. We return them all and let the UI sort.
  */
 
@@ -92,19 +92,19 @@ import type {
  * UI keys every affordance off this value and an ambiguous status leads directly to a
  * confusing interface.
  *
- * - `unsupported`  — this browser has no SpeechRecognition at all (Firefox today).
+ * - `unsupported`: this browser has no SpeechRecognition at all (Firefox today).
  *                    Listening will never work; the click-to-run command list still does.
- * - `idle`         — supported, not currently listening. The resting state.
- * - `starting`     — `start()` has been called and we are waiting on the permission
+ * - `idle`: supported, not currently listening. The resting state.
+ * - `starting`: `start()` has been called and we are waiting on the permission
  *                    prompt and/or the engine's `onstart`. Distinct from `listening`
  *                    because the microphone is NOT yet live and saying something now
  *                    will be missed.
- * - `listening`    — the engine is live and audio is being transcribed.
- * - `speaking`     — the synthesiser is talking. Recognition is deliberately suspended
+ * - `listening`: the engine is live and audio is being transcribed.
+ * - `speaking`: the synthesiser is talking. Recognition is deliberately suspended
  *                    for the duration (see "the feedback loop" above).
- * - `mic-blocked`  — permission denied by the user or by platform policy. Recoverable
+ * - `mic-blocked`: permission denied by the user or by platform policy. Recoverable
  *                    only through browser UI, so this gets its own explanatory panel.
- * - `error`        — anything else: no capture device, recogniser offline, unknown
+ * - `error`: anything else, no capture device, recogniser offline, unknown
  *                    engine error. `lastError` carries the detail.
  */
 export type SpeechStatus =
@@ -127,7 +127,7 @@ export interface SpeechSupport {
     synthesis: boolean;
     /**
      * Whether the page is a secure context. Recognition is gated on HTTPS (or
-     * `localhost`) in every browser that implements it — worth surfacing separately
+     * `localhost`) in every browser that implements it; worth surfacing separately
      * because "it works on my machine but not on the deployed http:// page" is
      * otherwise a baffling failure.
      */
@@ -159,7 +159,7 @@ export interface VoiceSettings {
  * natural pitch; both are 1 here, i.e. "whatever this voice does normally". The spec's
  * legal ranges are rate 0.1–10 and pitch 0–2, but this app clamps rate to **0.5–2** and
  * pitch to **0–2** in `sanitizeVoiceSettings`, because outside that band the output stops
- * being intelligible and, worse, engines disagree about it — several clamp silently to
+ * being intelligible and, worse, engines disagree about it; several clamp silently to
  * their own supported range, so a stored `rate: 6` would read back as 6 and play as
  * something else entirely. Keep the clamp and this object in step.
  *
@@ -179,7 +179,7 @@ export const DEFAULT_VOICE_SETTINGS: VoiceSettings = {
 /** localStorage key. Versioned so a future settings-shape change can't poison old data. */
 export const VOICE_SETTINGS_KEY = 'voice-command-demo.settings.v1';
 
-/** Clamp helper — keeps a persisted or user-supplied value inside the API's legal range. */
+/** Clamp helper: keeps a persisted or user-supplied value inside the API's legal range. */
 function clamp(value: number, min: number, max: number, fallback: number): number {
     if (!Number.isFinite(value)) return fallback;
     return Math.min(max, Math.max(min, value));
@@ -206,7 +206,7 @@ export function sanitizeVoiceSettings(input: unknown): VoiceSettings {
  *
  * Wrapped in try/catch for two separate reasons: the stored JSON may be corrupt (a
  * half-written value, or a user poking at devtools), and `localStorage` access itself
- * throws in some privacy configurations — historically Safari private browsing threw
+ * throws in some privacy configurations: historically Safari private browsing threw
  * a QuotaExceededError on *write*, and several browsers throw on *read* when storage
  * is blocked by a cookie policy. Neither should be able to stop the app from starting.
  */
@@ -227,7 +227,7 @@ export function saveVoiceSettings(settings: VoiceSettings, storage?: StorageLike
     try {
         storage.setItem(VOICE_SETTINGS_KEY, JSON.stringify(settings));
     } catch {
-        /* Storage blocked or full — preferences simply won't survive a reload. */
+        /* Storage blocked or full: preferences simply won't survive a reload. */
     }
 }
 
@@ -421,7 +421,7 @@ export class SpeechService {
      * `useVoiceSession.ts`): settings live here, in one mutable object owned by the
      * service, and `speak()` reads them at call time. There is no snapshot taken at
      * subscription time, so flipping mute or dragging the rate slider affects the very
-     * next utterance — including one that is already queued.
+     * next utterance, including one that is already queued.
      */
     updateSettings(patch: Partial<VoiceSettings>): VoiceSettings {
         this.voiceSettings = sanitizeVoiceSettings({ ...this.voiceSettings, ...patch });
@@ -440,7 +440,7 @@ export class SpeechService {
      *
      * `navigator.permissions.query({ name: 'microphone' })` is supported in Chromium
      * but *throws a TypeError* in Firefox and older Safari because `'microphone'` is not
-     * in their enum of permission names — so the whole thing lives in a try/catch and a
+     * in their enum of permission names, so the whole thing lives in a try/catch and a
      * throw is treated as "no information", not as a denial. Treating it as a denial
      * would block Safari users who actually have a working microphone.
      */
@@ -468,7 +468,7 @@ export class SpeechService {
      * user "you denied the microphone, here is how to undo that" and "something went
      * wrong".
      *
-     * The tracks are stopped immediately — we only wanted the permission grant, and
+     * The tracks are stopped immediately: we only wanted the permission grant, and
      * leaving the stream open lights the browser's recording indicator for no reason.
      */
     async requestMicrophoneAccess(): Promise<MicPermission> {
@@ -513,7 +513,7 @@ export class SpeechService {
     /**
      * Starts (or resumes) continuous listening.
      *
-     * Async because of the permission pre-flight — the caller gets a boolean that
+     * Async because of the permission pre-flight; the caller gets a boolean that
      * actually means "the microphone is coming up", instead of the reference's
      * synchronous `true` that only meant "the call didn't throw".
      */
@@ -524,7 +524,7 @@ export class SpeechService {
             this.onError({
                 code: 'unsupported',
                 message:
-                    'This browser has no speech recognition. Try Chrome or Edge — or use the "Try it" buttons on the Commands page, which run the same handlers without a microphone.',
+                    'This browser has no speech recognition. Try Chrome or Edge, or use the "Try it" buttons on the Commands page, which run the same handlers without a microphone.',
                 recoverable: false,
             });
             return false;
@@ -596,7 +596,7 @@ export class SpeechService {
     /**
      * Speaks `text`, suspending recognition for the duration.
      *
-     * Resolves when the utterance ends, errors out, or trips the watchdog — never
+     * Resolves when the utterance ends, errors out, or trips the watchdog; never
      * hangs. Resolves immediately (without speaking) when muted or when the browser has
      * no synthesiser, so callers can `await` unconditionally.
      */
@@ -648,7 +648,7 @@ export class SpeechService {
             this.setStatus('speaking');
 
             const finish = (): void => {
-                if (id !== this.utteranceSeq) return; // Superseded — a newer utterance owns the state.
+                if (id !== this.utteranceSeq) return; // Superseded: a newer utterance owns the state.
                 this.clearWatchdog();
                 this.stopSynthesisHeartbeat();
                 this.isSpeaking = false;
@@ -670,7 +670,7 @@ export class SpeechService {
             utterance.onerror = finish;
 
             // FIX C: some engines drop an utterance without firing either terminal
-            // event — Safari does it when the tab loses audio focus, Chrome when the tab
+            // event: Safari does it when the tab loses audio focus, Chrome when the tab
             // is backgrounded mid-sentence. Budget generously (speech runs ~12 chars a
             // second at rate 1) and divide by the rate, because a 2x rate finishes in
             // half the time and a 0.5x rate takes twice as long.
@@ -743,7 +743,7 @@ export class SpeechService {
      * there is no property that tells you whether it is running, the engine starts and
      * stops itself, and by the time your `onend` handler runs the engine may already
      * have been restarted by another code path. Swallowing it is the documented
-     * workaround, not laziness — but we distinguish "already started" (fine) from a
+     * workaround, not laziness, but we distinguish "already started" (fine) from a
      * real failure so FIX E's restart counter does not misfire.
      */
     private tryStartRecognition(): boolean {
@@ -753,7 +753,7 @@ export class SpeechService {
             return true;
         } catch (err: unknown) {
             const name = err instanceof Error ? err.name : '';
-            if (name === 'InvalidStateError') return true; // Already listening — success.
+            if (name === 'InvalidStateError') return true; // Already listening: success.
             return false;
         }
     }
@@ -773,7 +773,7 @@ export class SpeechService {
         rec.maxAlternatives = 1;
 
         rec.onstart = () => {
-            // Proof the engine really came up — reset the restart budget (FIX E).
+            // Proof the engine really came up; reset the restart budget (FIX E).
             this.restartAttempts = 0;
         };
 
@@ -863,7 +863,7 @@ export class SpeechService {
             //  - not if the user stopped: `wantsToListen` is the source of truth.
             //  - FIX E: not forever. If the engine cannot come up (revoked permission,
             //    unplugged microphone, offline recogniser), start() fails or errors
-            //    immediately, which fires onend again — an unbounded spin. Back off and
+            //    immediately, which fires onend again: an unbounded spin. Back off and
             //    give up after a bounded number of tries.
             if (this.destroyed || this.isSpeaking || !this.wantsToListen) return;
 
@@ -933,7 +933,7 @@ export class SpeechService {
             synthesis.addEventListener('voiceschanged', refresh);
         }
 
-        // Only schedule the fallback re-read when the first read came back empty —
+        // Only schedule the fallback re-read when the first read came back empty;
         // otherwise every construction leaves a stray timer behind for no benefit.
         if (this.cachedVoices.length === 0 && typeof setTimeout === 'function') {
             setTimeout(refresh, 300);
@@ -950,7 +950,7 @@ export class SpeechService {
 
     /**
      * FIX D. Chrome's synthesiser stops mid-sentence after roughly 15 seconds. The
-     * long-standing workaround — a `pause()` immediately followed by `resume()` — resets
+     * long-standing workaround (a `pause()` immediately followed by `resume()`) resets
      * its internal timer without an audible gap. Harmless on engines that do not have
      * the bug.
      */
@@ -996,7 +996,7 @@ export class SpeechService {
 /** How many times we will try to bring the recogniser back up before giving up (FIX E). */
 const MAX_RESTART_ATTEMPTS = 8;
 
-/** Reads `navigator.permissions` defensively — the property itself can be absent. */
+/** Reads `navigator.permissions` defensively; the property itself can be absent. */
 function readNavigatorPermissions(): PermissionsLike | null {
     try {
         if (typeof navigator === 'undefined') return null;
@@ -1010,7 +1010,7 @@ function readNavigatorPermissions(): PermissionsLike | null {
     }
 }
 
-/** Reads `navigator.mediaDevices` defensively — absent on insecure origins. */
+/** Reads `navigator.mediaDevices` defensively; absent on insecure origins. */
 function readNavigatorMediaDevices(): MediaDevicesLike | null {
     try {
         if (typeof navigator === 'undefined') return null;

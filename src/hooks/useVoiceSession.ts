@@ -14,13 +14,13 @@
  * `speechRate` and `speechPitch` as they were AT THE MOMENT THE EFFECT RAN. Those
  * variables are captured by value, and the effect never re-ran, so:
  *
- *   - toggling mute mid-session did nothing at all — the handler kept reading the
+ *   - toggling mute mid-session did nothing at all; the handler kept reading the
  *     `muted` value from session start and kept speaking;
  *   - the rate and pitch sliders appeared to work (they wrote to the service object
  *     directly) but the mute check did not, which is a genuinely baffling combination
  *     to debug because "some of the settings work".
  *
- * The naive repair — adding `muted` to the dependency array — is worse: the effect
+ * The naive repair (adding `muted` to the dependency array) is worse: the effect
  * would tear the whole service down and construct a new one on every toggle, which
  * kills the microphone, drops the transcript, and re-triggers the permission flow.
  *
@@ -83,7 +83,7 @@ export interface VoiceSession {
     toggle: () => void;
     updateSettings: (patch: Partial<VoiceSettings>) => void;
     applySettingsChange: (change: SettingsChange) => void;
-    /** Runs a command by id without a microphone — the Commands page "Try it" buttons. */
+    /** Runs a command by id without a microphone: the Commands page "Try it" buttons. */
     runCommand: (id: string) => void;
     /** Routes typed text through the identical pipeline as speech. */
     submitText: (text: string) => void;
@@ -94,7 +94,7 @@ export interface VoiceSession {
 }
 
 /**
- * The hook's entire configuration surface — one callback, and nothing that could
+ * The hook's entire configuration surface: one callback, and nothing that could
  * plausibly change mid-session.
  *
  * Everything else a caller might want to configure (voice, rate, pitch, mute) is
@@ -127,7 +127,7 @@ const PITCH_STEP = 0.2;
  * The conversation log (`entries`, capped at `MAX_ENTRIES` with the oldest dropped from
  * the top), the last spoken answer (so the "repeat" command has something to say), the
  * live interim transcript, the current status and error, and the voice list. It does NOT
- * own the voice settings — those live inside the service and are read at speak time.
+ * own the voice settings: those live inside the service and are read at speak time.
  *
  * ── WHAT IT DELIBERATELY DOES NOT OWN ───────────────────────────────────────────
  * Application state. Navigation, filtering and focusing are emitted as `CommandEffect`
@@ -139,7 +139,7 @@ const PITCH_STEP = 0.2;
  * `SpeechService` is not React-aware: its callbacks are plain property assignments,
  * installed once when the service is built. If those callbacks closed over props and
  * state directly they would freeze at mount, which is exactly the bug documented in the
- * file header — mute stopped working mid-session while the rate slider kept working,
+ * file header: mute stopped working mid-session while the rate slider kept working,
  * because one path read a captured copy and the other wrote to the service object.
  *
  * The repair is that `onEffect` and the final-transcript handler are stored in refs
@@ -158,7 +158,7 @@ const PITCH_STEP = 0.2;
  * `voiceschanged` listener), and torn down via `service.destroy()` on unmount.
  *
  * Nothing here starts listening on its own. `start()` must be called from a user
- * gesture — browsers gate microphone access on one, and an app that opens the mic on
+ * gesture: browsers gate microphone access on one, and an app that opens the mic on
  * mount is an app people close.
  *
  * ── ONE PIPELINE, THREE ENTRY POINTS ────────────────────────────────────────────
@@ -194,7 +194,7 @@ export function useVoiceSession({ onEffect }: UseVoiceSessionOptions): VoiceSess
 
     /* ── Latest-ref plumbing ──────────────────────────────────────────────────
        These refs are reassigned after EVERY render. The service's callbacks are
-       installed once, at mount, and dereference these — so they always run the newest
+       installed once, at mount, and dereference these, so they always run the newest
        closure without the service ever being rebuilt. This is the whole fix. */
     const onEffectRef = useRef(onEffect);
     const handleFinalRef = useRef<(text: string) => void>(() => {});
@@ -272,7 +272,7 @@ export function useVoiceSession({ onEffect }: UseVoiceSessionOptions): VoiceSess
 
             await serviceRef.current?.speak(spoken);
 
-            // Stop AFTER the confirmation has been spoken — cutting the microphone first
+            // Stop AFTER the confirmation has been spoken; cutting the microphone first
             // would mean the goodbye is spoken into a session that is already gone, and
             // `speak()` would restart listening behind it.
             if (result.effect.kind === 'stop') serviceRef.current?.stop();

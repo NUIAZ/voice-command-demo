@@ -17,7 +17,7 @@
  * Reads a dotted-quad IP address the way a person would say it.
  *
  * WHY: every TTS engine tested reads `203.0.113.5` as either "two hundred three point
- * zero point one hundred thirteen point five" or — worse — as a decimal number
+ * zero point one hundred thirteen point five" or, worse, as a decimal number
  * ("two hundred three point zero one one three five"). Neither is transcribable back
  * into an address by a listener. Spelling the separator as the word "dot" produces
  * "203 dot 0 dot 113 dot 5", which is exactly how a person reads an address aloud.
@@ -32,7 +32,7 @@ export function speakIp(ip: string): string {
 /**
  * Reads an identifier containing letters + digits so the letters are not swallowed.
  *
- * WHY: "HC-118" is read by several engines as "hick one hundred eighteen" — the engine
+ * WHY: "HC-118" is read by several engines as "hick one hundred eighteen"; the engine
  * treats a short uppercase run as a pronounceable word. Splitting the letters apart
  * and replacing the hyphen with a space forces letter-by-letter reading:
  * "H C 118".
@@ -72,7 +72,7 @@ export function isAre(count: number): string {
 /**
  * Joins a list the way a person speaks it: `"a, b, and c"`.
  *
- * WHY not `Array.join(', ')`: a comma-only list read aloud has no audible end — the
+ * WHY not `Array.join(', ')`: a comma-only list read aloud has no audible end; the
  * listener cannot tell whether the sentence finished or the engine was cut off. The
  * final "and" is the audible terminator.
  */
@@ -88,7 +88,7 @@ export function speakList(items: readonly string[], conjunction = 'and'): string
  *
  * WHY: reciting "0 offline, 0 in maintenance, 0 low battery" takes eight seconds to
  * communicate nothing. Reporting only non-zero items and falling back to a single
- * "all clear" sentence is both faster and much easier to act on — this is the single
+ * "all clear" sentence is both faster and much easier to act on; this is the single
  * biggest quality-of-life difference between a voice status report that people keep
  * using and one they turn off.
  */
@@ -139,7 +139,7 @@ export function speakMinutes(minutes: number): string {
  * - lowercase: recognisers capitalise sentence starts and proper nouns inconsistently.
  * - strip punctuation: Chrome inserts commas, periods and apostrophes based on prosody,
  *   so "what's wrong" can arrive as "What's wrong." or "Whats wrong" from the same
- *   utterance. Removing punctuation entirely makes keyword matching deterministic —
+ *   utterance. Removing punctuation entirely makes keyword matching deterministic;
  *   but note we replace apostrophes with *nothing* and other punctuation with a
  *   *space*, so "what's" → "whats" while "stop, listen" → "stop listen".
  * - collapse whitespace: interim results often arrive with doubled spaces.

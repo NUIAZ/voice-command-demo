@@ -12,7 +12,7 @@
  * breaks (or silently changes shape) when TypeScript is upgraded.
  *
  * So we declare our own *structural* interfaces with distinct `...Like` names. Distinct
- * names matter — re-declaring `SpeechRecognition` in a global scope would collide with
+ * names matter: re-declaring `SpeechRecognition` in a global scope would collide with
  * the ambient declaration on TypeScript versions that ship one. Because TypeScript is
  * structurally typed, a real `webkitSpeechRecognition` instance satisfies
  * `SpeechRecognitionLike` without any cast, and the whole codebase stays free of `any`.
@@ -47,7 +47,7 @@ export interface SpeechRecognitionResultListLike {
 /**
  * A `result` event.
  *
- * `resultIndex` is the index of the first result that changed since the last event —
+ * `resultIndex` is the index of the first result that changed since the last event;
  * iterating from 0 every time would re-deliver transcripts you already handled, which
  * is a classic source of duplicated commands.
  */
@@ -61,14 +61,14 @@ export interface SpeechRecognitionEventLike {
  * plus `string` so an unknown future code from a browser still type-checks instead of
  * crashing the build.
  *
- * - `no-speech`   — silence timeout. Routine; the engine simply heard nothing.
- * - `aborted`     — we (or a page navigation) called `stop()`/`abort()`. Routine.
- * - `not-allowed` — the user denied microphone access, or the page is not a secure
+ * - `no-speech`: silence timeout. Routine; the engine simply heard nothing.
+ * - `aborted`: we (or a page navigation) called `stop()`/`abort()`. Routine.
+ * - `not-allowed`: the user denied microphone access, or the page is not a secure
  *                   context. This is the one that deserves real UI.
- * - `service-not-allowed` — the platform (not the user) blocked the speech service,
+ * - `service-not-allowed`: the platform (not the user) blocked the speech service,
  *                   e.g. enterprise policy or an OS-level microphone lockout.
- * - `audio-capture` — no usable input device at all (unplugged headset, no mic).
- * - `network`     — Chrome's recogniser is cloud-backed; this is the offline case.
+ * - `audio-capture`: no usable input device at all (unplugged headset, no mic).
+ * - `network`: Chrome's recogniser is cloud-backed; this is the offline case.
  */
 export type SpeechRecognitionErrorCode =
     | 'no-speech'
@@ -87,7 +87,7 @@ export interface SpeechRecognitionErrorEventLike {
     readonly message?: string;
 }
 
-/** The recogniser object itself — only the members this project actually touches. */
+/** The recogniser object itself: only the members this project actually touches. */
 export interface SpeechRecognitionLike {
     continuous: boolean;
     interimResults: boolean;

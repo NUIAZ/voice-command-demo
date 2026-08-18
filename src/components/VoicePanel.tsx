@@ -65,7 +65,7 @@ function MicIcon({ muted }: { muted: boolean }) {
 }
 
 /**
- * Renders a `VoiceSession` and nothing else — it holds no session state of its own,
+ * Renders a `VoiceSession` and nothing else; it holds no session state of its own,
  * only the two bits of local UI state (the typed draft and whether the settings
  * disclosure is open).
  *
@@ -89,7 +89,7 @@ export default function VoicePanel({ session }: Props) {
     const canListen = session.support.recognition && session.support.secureContext;
 
     // Keep the newest log entry in view. `block: 'nearest'` scrolls the log container
-    // only — `scrollIntoView` with the default block value yanks the whole page, which
+    // only: `scrollIntoView` with the default block value yanks the whole page, which
     // is disorienting and, for a sighted keyboard user, loses their place entirely.
     useEffect(() => {
         // Feature-detected for the same reason as the fleet table's scroll: it is a
@@ -130,7 +130,7 @@ export default function VoicePanel({ session }: Props) {
                             own.
                         </p>
                         <p style={{ marginBottom: 0 }}>
-                            Everything still works without a microphone — use{' '}
+                            Everything still works without a microphone; use{' '}
                             <strong>Try it</strong> on the Commands page, or the text box below.
                         </p>
                         <div className="btn-row" style={{ marginTop: '8px' }}>
@@ -150,7 +150,7 @@ export default function VoicePanel({ session }: Props) {
                 {!session.support.recognition && (
                     <div className="notice notice--info">
                         <p style={{ marginBottom: 0 }}>
-                            This browser does not implement speech recognition — Firefox, most
+                            This browser does not implement speech recognition. Firefox, most
                             notably. Use the <strong>Try it</strong> buttons on the Commands page or the
                             text box below; answers are still spoken aloud if speech synthesis is
                             available.
@@ -211,7 +211,7 @@ export default function VoicePanel({ session }: Props) {
                     ) : (
                         <span className="muted small">
                             {session.listening
-                                ? 'Listening — what you say appears here as you speak.'
+                                ? 'Listening. What you say appears here as you speak.'
                                 : 'Your words will appear here while you speak.'}
                         </span>
                     )}
@@ -290,18 +290,18 @@ export default function VoicePanel({ session }: Props) {
                             onChange={(e) => session.updateSettings({ voiceUri: e.target.value || null })}
                         >
                             <option value="">Browser default</option>
-                            {/* Every installed voice, not just the English ones — filtering
+                            {/* Every installed voice, not just the English ones; filtering
                                 the list to one language hides the voices a non-English user
                                 actually has. */}
                             {session.voices.map((voice) => (
                                 <option key={voice.voiceURI} value={voice.voiceURI}>
-                                    {voice.name} ({voice.lang}){voice.localService ? '' : ' — network'}
+                                    {voice.name} ({voice.lang}){voice.localService ? '' : ' (network)'}
                                 </option>
                             ))}
                         </select>
                         {session.voices.length === 0 && (
                             <span className="small muted">
-                                No voices reported yet. Chrome loads them asynchronously — they usually
+                                No voices reported yet. Chrome loads them asynchronously; they usually
                                 appear a moment after the page does.
                             </span>
                         )}
@@ -360,7 +360,7 @@ export default function VoicePanel({ session }: Props) {
                     </div>
 
                     <p className="small muted" style={{ marginTop: '10px', marginBottom: 0 }}>
-                        Saved to <code>localStorage</code> and applied to the very next sentence —
+                        Saved to <code>localStorage</code> and applied to the very next sentence,
                         including one already being spoken.
                     </p>
                 </section>

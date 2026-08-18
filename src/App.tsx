@@ -39,7 +39,7 @@ function toVehicleStatus(value: string | null): VehicleStatus | null {
 
 /**
  * Root component. Holds the four pieces of application state a spoken command can move
- * — current view, status filter, depot filter, focused vehicle — and hands
+ * (current view, status filter, depot filter, focused vehicle) and hands
  * `useVoiceSession` the one callback that mutates them.
  *
  * The filter and focus states are mutually exclusive by construction: applying a filter
@@ -48,7 +48,7 @@ function toVehicleStatus(value: string | null): VehicleStatus | null {
  * matches neither.
  *
  * Effects arrive as inert data, so this is the only place in the app where a spoken
- * command turns into a state change — which is what makes the voice layer removable and
+ * command turns into a state change, which is what makes the voice layer removable and
  * the views ordinary.
  */
 export default function App() {
@@ -60,7 +60,7 @@ export default function App() {
     /**
      * Applies the effects a command asked for.
      *
-     * Passed to `useVoiceSession` as an inline-ish callback — safe because the hook
+     * Passed to `useVoiceSession` as an inline-ish callback; safe because the hook
      * stores it in a latest-ref rather than in an effect dependency array, so changing
      * it can never tear down the microphone session.
      */
@@ -104,7 +104,7 @@ export default function App() {
                     <h1 className="app-header__title">Voice Command Demo</h1>
                     <p className="app-header__tag">
                         Hands-free control of a web app using only the browser&rsquo;s built-in Web Speech
-                        API — no API keys, no backend, no cloud service of our own.
+                        API: no API keys, no backend, no cloud service of our own.
                     </p>
                 </div>
                 <nav className="app-nav" aria-label="Views">

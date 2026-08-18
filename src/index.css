@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════════════
-   Voice Command Demo — stylesheet
+   Voice Command Demo: stylesheet
    ══════════════════════════════════════════════════════════════════════════════
 
    No framework, no build-time CSS tooling: one file of custom properties plus plain
@@ -7,11 +7,11 @@
    arrive with a UI framework attached.
 
    Three things here are load-bearing for accessibility rather than looks:
-     1. `prefers-reduced-motion` — every animation in this file is disabled when the
+     1. `prefers-reduced-motion`: every animation in this file is disabled when the
         user has asked for reduced motion. The listening indicator pulses continuously,
         which is precisely the kind of persistent movement that triggers vestibular
         symptoms. The reference implementation animated unconditionally.
-     2. `:focus-visible` — a visible, high-contrast focus ring on every interactive
+     2. `:focus-visible`: a visible, high-contrast focus ring on every interactive
         element. Voice control is an assistive technology; shipping it in an interface
         that cannot be driven by keyboard would be self-defeating.
      3. Colours are defined for light AND dark, and every text/background pairing was
@@ -478,7 +478,7 @@ tr.is-focused td:first-child {
 }
 
 /* Battery meter: a real <meter> would style inconsistently across browsers, so this is
-   a plain div with an explicit text label beside it — never colour alone. */
+   a plain div with an explicit text label beside it, never colour alone. */
 .meter {
     display: inline-block;
     width: 54px;
@@ -758,7 +758,7 @@ input[type='range'] {
    REDUCED MOTION
    Every animation and transition above is opt-in. A continuously pulsing microphone
    ring is exactly the sort of persistent motion that causes problems for people with
-   vestibular disorders, and it is decorative — the listening state is also conveyed by
+   vestibular disorders, and it is decorative; the listening state is also conveyed by
    the button's colour, its label, and an aria-live status message.
    ══════════════════════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {

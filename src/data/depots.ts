@@ -10,7 +10,7 @@ import type { Depot, StatusMeta, VehicleStatus } from './types';
 /**
  * Depot list.
  *
- * Note the deliberate phonetic spread — Northgate / Riverside / Eastport / Summit /
+ * Note the deliberate phonetic spread: Northgate / Riverside / Eastport / Summit /
  * Lakeview / Old Quarry share no leading syllables. Depot names are matched against
  * the transcript, and a recogniser that has to choose between "Marbury" and "Marlbury"
  * will get it wrong roughly half the time. Distinct first syllables are the single
@@ -114,7 +114,7 @@ export const STATUSES: readonly StatusMeta[] = [
     },
 ];
 
-/** Lookup helper — depot record by id. Returns undefined for unknown ids. */
+/** Lookup helper: depot record by id. Returns undefined for unknown ids. */
 export function getDepot(id: string): Depot | undefined {
     return DEPOTS.find((d) => d.id === id);
 }
@@ -124,7 +124,7 @@ export function depotName(id: string): string {
     return getDepot(id)?.name ?? id;
 }
 
-/** Lookup helper — status metadata by id. */
+/** Lookup helper: status metadata by id. */
 export function getStatus(id: VehicleStatus): StatusMeta {
     // Non-null: STATUSES covers every member of the VehicleStatus union by construction,
     // and the compiler enforces that because each entry's `id` is typed VehicleStatus.

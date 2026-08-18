@@ -26,7 +26,7 @@ interface BrowserRow {
 
 /**
  * The matrix. Deliberately describes *behaviour* rather than version numbers: the
- * implementations shift, but the shape of the support story has been stable for years —
+ * implementations shift, but the shape of the support story has been stable for years,
  * Chromium implements recognition behind the `webkit` prefix and sends audio to a
  * server, WebKit implements it with an on-device or server model depending on the OS,
  * and Gecko does not implement it at all.
@@ -34,16 +34,16 @@ interface BrowserRow {
 const BROWSERS: BrowserRow[] = [
     {
         browser: 'Chrome (desktop & Android)',
-        recognition: 'Yes — as webkitSpeechRecognition',
+        recognition: 'Yes, as webkitSpeechRecognition',
         recognitionTone: 'ok',
         synthesis: 'Yes',
         synthesisTone: 'ok',
         notes:
-            'The reference implementation. Recognition is performed by a Google speech service, not on your device, so it needs a working internet connection. Chrome also ends a "continuous" session after several seconds of silence — this demo restarts it automatically.',
+            'The reference implementation. Recognition is performed by a Google speech service, not on your device, so it needs a working internet connection. Chrome also ends a "continuous" session after several seconds of silence, this demo restarts it automatically.',
     },
     {
         browser: 'Edge (Chromium)',
-        recognition: 'Yes — as webkitSpeechRecognition',
+        recognition: 'Yes, as webkitSpeechRecognition',
         recognitionTone: 'ok',
         synthesis: 'Yes',
         synthesisTone: 'ok',
@@ -52,12 +52,12 @@ const BROWSERS: BrowserRow[] = [
     },
     {
         browser: 'Safari (macOS & iOS)',
-        recognition: 'Partial — as webkitSpeechRecognition',
+        recognition: 'Partial, as webkitSpeechRecognition',
         recognitionTone: 'warn',
         synthesis: 'Yes',
         synthesisTone: 'ok',
         notes:
-            'Present, but stricter: recognition must be started from a user gesture, and on iOS it is tied to the system dictation setting — if dictation is disabled in Settings, it fails. Safari also populates the synthesis voice list synchronously and may never fire voiceschanged, and it can drop an utterance without firing onend, which is why this demo runs a watchdog timer.',
+            'Present, but stricter: recognition must be started from a user gesture, and on iOS it is tied to the system dictation setting; if dictation is disabled in Settings, it fails. Safari also populates the synthesis voice list synchronously and may never fire voiceschanged, and it can drop an utterance without firing onend, which is why this demo runs a watchdog timer.',
     },
     {
         browser: 'Firefox',
@@ -66,7 +66,7 @@ const BROWSERS: BrowserRow[] = [
         synthesis: 'Yes',
         synthesisTone: 'ok',
         notes:
-            'SpeechRecognition is not exposed to web content. There has been a preference behind which a partial implementation lived for years, but it is not on by default and cannot be relied on. Speech synthesis works normally. Use the "Try it" buttons on the Commands page — they run the identical handlers.',
+            'SpeechRecognition is not exposed to web content. There has been a preference behind which a partial implementation lived for years, but it is not on by default and cannot be relied on. Speech synthesis works normally. Use the "Try it" buttons on the Commands page, they run the identical handlers.',
     },
     {
         browser: 'Samsung Internet / other Chromium forks',
@@ -84,7 +84,7 @@ const BROWSERS: BrowserRow[] = [
  *
  * The banner at the top is driven by `support`, which is *feature-detected* at runtime;
  * the table below it is hand-maintained prose about the engines' known behaviour. Keeping
- * the two visibly separate is deliberate — the detected result is always authoritative for
+ * the two visibly separate is deliberate; the detected result is always authoritative for
  * the browser actually running the page, and the table is background that will age.
  */
 export default function SupportView({ support }: Props) {
@@ -149,8 +149,8 @@ export default function SupportView({ support }: Props) {
                 <dl className="definition-list">
                     <dt>A secure context</dt>
                     <dd>
-                        HTTPS, or <code>http://localhost</code>. Microphone access — and therefore
-                        recognition — is refused on a plain <code>http://</code> origin. A page deployed
+                        HTTPS, or <code>http://localhost</code>. Microphone access (and therefore
+                        recognition) is refused on a plain <code>http://</code> origin. A page deployed
                         to GitHub Pages is served over HTTPS, so this is only a problem when testing
                         against a LAN address.
                     </dd>
@@ -158,7 +158,7 @@ export default function SupportView({ support }: Props) {
                     <dt>Microphone permission</dt>
                     <dd>
                         The browser asks once per origin. Granting it is remembered; denying it is
-                        <em> also</em> remembered, and the browser will not ask again — the user has to
+                        <em> also</em> remembered, and the browser will not ask again; the user has to
                         change it from the padlock or camera icon in the address bar and reload. That
                         one-way door is why this demo pre-flights the permission and shows a specific
                         recovery message instead of a generic error.
@@ -206,7 +206,7 @@ export default function SupportView({ support }: Props) {
                 </ul>
                 <p>
                     If you are building something where the audio itself is sensitive, feature-detection
-                    is not enough — you need a recogniser you control, running where you can point at
+                    is not enough: you need a recogniser you control, running where you can point at
                     it. The Web Speech API cannot give you that guarantee.
                 </p>
             </section>
@@ -216,7 +216,7 @@ export default function SupportView({ support }: Props) {
                 <p>
                     <strong>Voice control is itself an assistive technology.</strong> For someone with a
                     motor impairment, RSI, a temporary injury, or their hands full, speaking to an
-                    interface may be the only practical way to use it — which makes it all the more
+                    interface may be the only practical way to use it, which makes it all the more
                     important that adding voice does not degrade anything else. Adding a voice mode that
                     can only be reached with a mouse, or that steals focus, or that animates
                     continuously, makes an app less accessible overall even though the new feature is an
@@ -226,7 +226,7 @@ export default function SupportView({ support }: Props) {
                 <ul>
                     <li>
                         Recognition accuracy is measurably worse for non-native accents, for regional
-                        dialects, and for people with dysarthria, aphasia, or a stammer — the exact
+                        dialects, and for people with dysarthria, aphasia, or a stammer: the exact
                         groups most likely to benefit. Voice must always be an addition to a pointer and
                         keyboard interface, never a replacement for one.
                     </li>
@@ -247,7 +247,7 @@ export default function SupportView({ support }: Props) {
                     <li>The live transcript and every response are in <code>aria-live</code> regions, so screen-reader users receive them as text.</li>
                     <li>All animation is disabled under <code>prefers-reduced-motion</code>.</li>
                     <li>Focus is never stolen; a skip link is the first focusable element; focus indicators are visible and high contrast.</li>
-                    <li>State is never conveyed by colour alone — status pills carry text, and the battery bar is paired with its number.</li>
+                    <li>State is never conveyed by colour alone: status pills carry text, and the battery bar is paired with its number.</li>
                     <li>Semantic landmarks throughout: <code>header</code>, <code>nav</code>, <code>main</code>, <code>aside</code>, <code>footer</code>.</li>
                 </ul>
             </section>

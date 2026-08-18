@@ -79,7 +79,7 @@ describe('stop words are defined in exactly one place', () => {
 });
 
 describe('ordering decisions that change behaviour', () => {
-    it('places unmute before mute — otherwise "unmute" matches "mute" and is unreachable', () => {
+    it('places unmute before mute; otherwise "unmute" matches "mute" and is unreachable', () => {
         expect(orderOf('unmute')).toBeLessThan(orderOf('mute'));
         expect(idFor('unmute')).toBe('unmute');
         expect(idFor('mute')).toBe('mute');
@@ -244,7 +244,7 @@ describe('depot reports', () => {
 
     it('says so plainly when a depot is clean, rather than listing zeros', () => {
         const result = processTranscript('depot report');
-        // No depot named — it should ask rather than pick one.
+        // No depot named: it should ask rather than pick one.
         expect(result.response).toContain('Which depot');
     });
 
@@ -322,7 +322,7 @@ describe('repeat', () => {
     });
 });
 
-describe('runCommandById — the click-to-try path used when speech is unavailable', () => {
+describe('runCommandById: the click-to-try path used when speech is unavailable', () => {
     it('produces exactly the same result as speaking the example', () => {
         for (const command of COMMANDS) {
             expect(runCommandById(command.id), command.id).toEqual(processTranscript(command.example));

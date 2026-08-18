@@ -9,13 +9,13 @@
  *   - anyone in Firefox, which has no speech recognition at all;
  *   - anyone without a microphone, or who has denied permission;
  *   - anyone in an open-plan office, a library, or a shared space;
- *   - anyone with a speech difference the recogniser handles badly — recognisers are
- *     measurably worse for non-native accents, dysarthria and stammering, and a voice
+ *   - anyone with a speech difference the recogniser handles badly (recognisers are
+ *     measurably worse for non-native accents, dysarthria and stammering), and a voice
  *     interface with no pointer equivalent simply locks those users out;
  *   - anyone who would just rather not talk to their computer.
  *
- * Because it calls `runCommandById` — the same function `processTranscript` dispatches
- * to — there is no parallel click-only code path that can drift out of step with the
+ * Because it calls `runCommandById`, the same function `processTranscript` dispatches
+ * to: there is no parallel click-only code path that can drift out of step with the
  * spoken one.
  */
 
@@ -24,7 +24,7 @@ import { commandsByGroup } from '../services/commands';
 interface Props {
     /** Runs a command by id and speaks the result through the live session. */
     onRun: (id: string) => void;
-    /** Whether this browser can listen at all — changes the framing of the page. */
+    /** Whether this browser can listen at all; changes the framing of the page. */
     speechSupported: boolean;
 }
 
@@ -33,7 +33,7 @@ interface Props {
  * command to the router adds it here, and the trigger phrases shown are the exact strings
  * the matcher tests against rather than a hand-written paraphrase.
  *
- * `speechSupported` only changes the framing copy — the "Try it" buttons are rendered and
+ * `speechSupported` only changes the framing copy; the "Try it" buttons are rendered and
  * usable either way, which is the entire point of the page (see the file header).
  */
 export default function CommandsView({ onRun, speechSupported }: Props) {
@@ -52,14 +52,14 @@ export default function CommandsView({ onRun, speechSupported }: Props) {
                     <div className="notice notice--info">
                         <p>
                             <strong>This browser has no speech recognition.</strong> Every command below
-                            still works — press <strong>Try it</strong>, or type a phrase into the box in
+                            still works: press <strong>Try it</strong>, or type a phrase into the box in
                             the voice panel. Spoken answers still work if your browser has speech
                             synthesis, which most do.
                         </p>
                     </div>
                 )}
 
-                <h3 style={{ marginTop: '18px' }}>How matching works — and what it does not do</h3>
+                <h3 style={{ marginTop: '18px' }}>How matching works, and what it does not do</h3>
                 <p className="small muted">
                     The transcript is lowercased, stripped of punctuation, and tested against an ordered
                     list of commands. The first command whose trigger phrase appears in the transcript
@@ -74,7 +74,7 @@ export default function CommandsView({ onRun, speechSupported }: Props) {
                     ones&rdquo; matches the offline command, because negation is invisible to a
                     substring test. In exchange it is fully deterministic, runs in microseconds, needs
                     no network, and when it gets something wrong you can read the source and see
-                    exactly why — a fair trade for a small fixed vocabulary, and the wrong one the
+                    exactly why: a fair trade for a small fixed vocabulary, and the wrong one the
                     moment users start speaking freely.
                 </p>
             </section>
@@ -99,7 +99,7 @@ export default function CommandsView({ onRun, speechSupported }: Props) {
                                                 onClick={() => onRun(command.id)}
                                             >
                                                 Try it
-                                                <span className="sr-only"> — run the {command.title} command</span>
+                                                <span className="sr-only">: run the {command.title} command</span>
                                             </button>
                                         </div>
                                         <p className="small muted" style={{ margin: '3px 0 0' }}>
