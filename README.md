@@ -341,7 +341,7 @@ src/
     CommandsView.tsx   Command reference + "Try it" buttons.
     SupportView.tsx    Browser matrix, permission flow, privacy, accessibility notes.
     VoicePanel.tsx     Mic button, live transcript, responses, history, settings.
-  tests/               139 tests across five files. No microphone, no audio device.
+  tests/               145 tests across six files. No microphone, no audio device.
 ```
 
 Everything in `data/` is invented. Addresses come from the ranges reserved by
