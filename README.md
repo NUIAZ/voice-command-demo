@@ -77,28 +77,28 @@ badly, and for anyone who simply would rather not talk to their computer.
 
 ## How it works
 
-```
-  microphone
-      │
-      ▼
-  SpeechRecognition ──► interim + final transcript ──► normalise
-      ▲                          │                        │
-      │                          ▼                        ▼
-      │                     aria-live region       ordered command table
-      │                    (screen readers)        (first match wins)
-      │                                                   │
-      │                                                   ▼
-      │                                          handler over in-memory data
-      │                                                   │
-      │                             ┌─────────────────────┴─────────────┐
-      │                             ▼                                   ▼
-      │                    response text ────► aria-live         effect (navigate,
-      │                             │                             filter, focus, stop,
-      │                             ▼                             settings)
-      └──── restart ◄──── speechSynthesis.speak() ────► onend/onerror
-                          (recognition suspended
-                           for the duration)
-```
+Everything starts at the microphone. When you press it, the app runs a permission
+pre-flight, then starts a continuous `SpeechRecognition` session. As you talk, the browser
+hands back interim transcripts (what it thinks you said so far) and, on a pause, a final one.
+The interim text goes straight into a live region so a screen-reader user hears the same
+thing a sighted user sees typing itself out; the final text is normalised (lower-cased,
+punctuation stripped, whitespace collapsed) and handed to the command router.
+
+The router is an ordered table of commands, and the first one whose matcher accepts the
+text wins. Every command has a handler that runs against the in-memory dataset (48 fictional
+vans, six depots) and returns two things: the response text, and an optional effect such as
+navigate to a view, apply a filter, move focus, stop, or change a voice setting. There is no
+server anywhere in this path; a question is answered in a few milliseconds by ordinary
+TypeScript.
+
+The response then goes two ways at once. It lands in a second, separate live region (so
+screen readers announce it and so it is available with sound off), and it is spoken with
+`speechSynthesis`. Before speaking, recognition is deliberately stopped, because on a laptop
+with open speakers the microphone would otherwise hear the answer and run it as the next
+command. When the utterance ends, or errors, recognition restarts, and the loop is ready for
+the next thing you say. That start, listen, route, answer, pause, speak, restart cycle is the
+whole application; everything else in the code is the awkward edge cases of making that
+cycle reliable, which the next section walks through.
 
 Three modules, deliberately separable:
 
