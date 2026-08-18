@@ -5,6 +5,12 @@
 [![React 19](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev)
 [![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6.svg)](https://www.typescriptlang.org)
 
+<p align="center">
+  <img src="docs/hero-answered.png" width="380" alt="The Voice control panel while speaking: the microphone is paused so it does not hear itself, and the answer lists which vans are offline, in maintenance or low on charge">
+  &nbsp;&nbsp;
+  <img src="docs/screenshot-dark.png" width="640" alt="The fleet dashboard in dark mode with the Voice control panel on the right">
+</p>
+
 **Hands-free voice control of a web application, using nothing but the browser's built-in
 Web Speech API.** No API keys. No backend. No cloud service of its own. No paid tier.
 The whole thing is a static bundle that runs on GitHub Pages.
