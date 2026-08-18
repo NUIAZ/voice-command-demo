@@ -165,6 +165,13 @@ export default function App() {
                     service for transcription. This page has no backend and stores nothing beyond your
                     voice preferences in <code>localStorage</code>.
                 </p>
+                <p>
+                    {/* The text version is generated from the same dataset and command table at
+                        build time (see src/services/textVersion.ts). Linked here as well as from
+                        <noscript>, for anyone who would rather read or print than talk. */}
+                    <a href="./text.html">Text version</a>: the fleet data and every command, no
+                    script required.
+                </p>
             </footer>
         </>
     );

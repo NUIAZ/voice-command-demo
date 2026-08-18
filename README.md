@@ -287,6 +287,23 @@ What this demo does:
 - Semantic landmarks throughout, and a `forced-colors` block for Windows high-contrast
   mode.
 
+## Text-only version (no script required)
+
+Speech recognition and synthesis need JavaScript, so a browser with scripting off, or a
+text-only browser such as Lynx, cannot use the microphone. It should still get the
+information the demo is about. The build therefore also produces **`text.html`**: the fleet
+summary, every vehicle as a real table (header cells, caption, status as text), the depots,
+and all the voice commands with an example phrase for each. Live:
+<https://nuiaz.github.io/voice-command-demo/text.html>.
+
+It is **generated, not written**. `scripts/build-text.mjs` runs before every `dev` and
+`build`, reads the same dataset and command table the app uses, and writes
+`public/text.html` (gitignored), so it cannot drift; `src/tests/textVersion.test.ts` fails
+the build if any vehicle or command is missing from it. The `<noscript>` block in
+`index.html` offers both paths: read the text version, or open the app in a browser with
+JavaScript enabled (Chrome or Edge for speech recognition; in Firefox every command still
+runs from its **Try it** button and the text box).
+
 ## Running it locally
 
 Requires Node 20+ (CI uses 22).

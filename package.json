@@ -6,11 +6,12 @@
   "description": "Hands-free voice control of a web app using only the browser's built-in Web Speech API. No API keys, no backend.",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "npm run build:text && vite",
+    "build": "npm run build:text && tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:text": "node scripts/build-text.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",

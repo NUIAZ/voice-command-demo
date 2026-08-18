@@ -13,8 +13,27 @@
   <body>
     <div id="root"></div>
     <noscript>
-      This demo is a client-side JavaScript application: speech recognition and speech
-      synthesis both run in the browser, so JavaScript must be enabled to use it.
+      <div style="max-width: 46rem; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; line-height: 1.5">
+        <h1>Voice Command Demo</h1>
+        <p>
+          This demo is a JavaScript application, and it looks like your browser has scripting turned
+          off or does not support it. Speech recognition and speech synthesis are browser features
+          that script has to drive, so the microphone cannot work here. You still have two options.
+        </p>
+        <p>
+          <strong>Read the text version:</strong> <a href="./text.html">text.html</a> has the fleet
+          summary, every vehicle as a table, the depots, and all the voice commands with an example
+          phrase for each, in plain HTML with no script and no stylesheet. It is generated from the
+          same dataset and command table as this app on every build, so it is always current.
+        </p>
+        <p>
+          <strong>Or try the interactive version:</strong> if you can, enable JavaScript for this
+          site, or open it in a current browser. Speech recognition needs Chrome or Edge (Safari
+          works after a tap); Firefox has no speech recognition, but every command still runs from
+          its Try it button and the text box, using the same handler the microphone would. Nothing
+          here is served from a third party; the script is the app itself.
+        </p>
+      </div>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
